@@ -21,9 +21,9 @@ export default function UploadPage() {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
   const years = getYearOptions(1950, new Date().getFullYear());
 
+  // Validate input fields
   const validate = () => {
     if (bibtex.trim() !== "") {
       return true;
@@ -36,20 +36,25 @@ export default function UploadPage() {
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setResult(null);
 
+    // Validate input fields
     if (!validate()) {
       setError("Please fill all required fields or provide a valid BibTeX.");
       return;
     }
 
+    // Reset previous results
     setLoading(true);
 
+    // Prepare data for submission
     try {
       let bodyData: any;
+      // If BibTeX is provided, use it directly
       if (bibtex.trim() !== "") {
         bodyData = { bibtex };
       } else {
@@ -65,10 +70,12 @@ export default function UploadPage() {
         if (doi.trim() !== "") bodyData.doi = doi;
       }
 
+      // Include username if available
       if (user?.username) {
         bodyData.username = user.username;
       }
-      
+
+      // Send POST request to upload article
       const res = await fetch("http://localhost:3001/articles/upload", {
         method: "POST",
         headers: {
@@ -76,7 +83,8 @@ export default function UploadPage() {
         },
         body: JSON.stringify(bodyData)
       });
-
+      
+      // Check for errors in response
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.message || "Upload failed");

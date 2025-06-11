@@ -8,6 +8,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  // Use the login function from UserContext to handle authentication
   const { login } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,12 +26,15 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
       
+      // Call the login function from UserContext to set user state
       login({ username: data.username, mentor: data.mentor });
 
+      // Set success message and reset form fields
       setMessage("Login successful! Redirecting...");
       setUsername("");
       setPassword("");
 
+      // Redirect to home page after a short delay
       setTimeout(() => router.push("/"), 1200);
     } catch (err: any) {
       setMessage(err.message);

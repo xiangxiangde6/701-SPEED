@@ -20,11 +20,12 @@ export default function MyArticlesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!user) router.replace("/login");
   }, [user]);
 
+  // Fetch user's articles on mount
   useEffect(() => {
     if (!user) return;
     async function fetchArticles() {

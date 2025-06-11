@@ -11,24 +11,25 @@ export class ArticlesService {
     private articleModel: Model<ArticleDocument>,
   ) {}
 
-  // 新增投稿，支持结构化和 BibTeX
+  // New article upload
   async create(data: CreateArticleDto & { username: string }): Promise<Article> {
     if (data.bibtex) {
-      // 解析 bibtex，提取必填字段
+      // Analyze bibtex format
       const parsed = this.parseBibtex(data.bibtex);
 
-      // 确保 title 和 authors 存在，否则抛出错误
+      // Ensure required fields are present
       if (!parsed.title || !parsed.authors) {
         throw new Error('BibTeX must include title and author fields');
       }
 
       return this.articleModel.create({
         ...data,
-        ...parsed, // 将解析的字段覆盖进来
+        ...parsed, // replace with parsed bibtex fields
         approved: false,
       });
     }
-    // 非 bibtex 上传，直接保存
+
+    // If no bibtex, use provided fields directly
     return this.articleModel.create({
       ...data,
       approved: false,
@@ -52,15 +53,15 @@ export class ArticlesService {
     return match ? match[1].trim() : '';
   }
 
-  // 查询某用户所有投稿
+  // Check if article exists by DOI
   async findByUsername(username: string): Promise<Article[]> {
     return this.articleModel.find({ username }).exec();
   }
 
-  // 搜索
+  // Search articles by keyword
   async search(keyword: string): Promise<Article[]> {
     const q = {
-      approved: true, // 只搜索已审核的文章
+      approved: true, // only search approved articles
       $or: [
         { title: { $regex: keyword, $options: 'i' } },
         { authors: { $regex: keyword, $options: 'i' } },
@@ -71,12 +72,12 @@ export class ArticlesService {
     return this.articleModel.find(q).exec();
   }
 
-  // 查询所有未审核
+  // Find all articles pending review
   async findPending(): Promise<Article[]> {
   return this.articleModel.find({ approved: false, rejected: { $ne: true } }).exec();
 }
 
-  // 审核通过/驳回
+  // Review an article (approve or reject)
   async review(id: string, approve: boolean) {
   if (approve) {
     return this.articleModel.findByIdAndUpdate(id, { approved: true, rejected: false }, { new: true }).exec();
@@ -85,7 +86,7 @@ export class ArticlesService {
   }
 }
 
-  // 按ID查详情
+  // Find article by ID
   async findById(id: string): Promise<Article | null> {
     return this.articleModel.findById(id).exec();
   }

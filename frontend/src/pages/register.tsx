@@ -12,7 +12,6 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // 默认注册 user 角色
       const res = await fetch("http://localhost:3001/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

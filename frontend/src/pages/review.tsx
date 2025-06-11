@@ -20,7 +20,7 @@ export default function ReviewPage() {
   const { user } = useUser();
   const router = useRouter();
 
-  // 权限控制：只有 mentor 可见
+  // Only mentors can access this page
   useEffect(() => {
     if (!user || !user.mentor) {
       router.replace("/login");
@@ -31,7 +31,7 @@ export default function ReviewPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 拉取待审核文章
+  // get pending articles for review
   useEffect(() => {
     if (!user || !user.mentor) return;
     async function fetchArticles() {
@@ -49,7 +49,7 @@ export default function ReviewPage() {
     fetchArticles();
   }, [user]);
 
-  // 审核通过/驳回操作
+  // review article (approve or reject)
   const handleReview = async (id: string, approve: boolean) => {
     try {
       const res = await fetch(`http://localhost:3001/articles/review/${id}`, {

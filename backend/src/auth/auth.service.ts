@@ -5,8 +5,10 @@ import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class AuthService {
+// AuthService handles user registration and login
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  // Register a new user
   async register(username: string, password: string, mentor: boolean = false) {
     const exists = await this.userModel.findOne({ username });
     if (exists) throw new Error('Username already exists');
@@ -15,6 +17,7 @@ export class AuthService {
     return { username: user.username, mentor: user.mentor };
   }
 
+  // Login a user
   async login(username: string, password: string) {
     const user = await this.userModel.findOne({ username });
     if (!user || user.password !== password) {

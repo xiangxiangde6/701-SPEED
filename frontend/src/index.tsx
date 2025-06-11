@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { useUser } from "../contexts/UserContext";
+// import { useUser } from "../contexts/UserContext";
 
 export default function Home() {
-  const { user } = useUser();
+  // const { user } = useUser();
 
   return (
     <div
@@ -19,7 +19,7 @@ export default function Home() {
     >
       <h1 style={{ fontSize: 36, marginBottom: 18, color: "#2255bb" }}>SPEED System</h1>
       <p style={{ fontSize: 19, marginBottom: 40, color: "#333", lineHeight: 1.6 }}>
-        Welcome to SPEED{user ? `! ${user.username}` : "!"} <br />
+        Welcome to SPEED! <br />
         Submit, search, and review research articles easily.<br />
         <span style={{ color: "#3367d6", fontWeight: 500 }}>
           Your research management starts here.
